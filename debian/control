@@ -1,0 +1,27 @@
+Source: stom-pi-ui
+Section: sound
+Priority: optional
+Maintainer: Dataforte <info@dataforte.net>
+Build-Depends: debhelper (>= 13),
+               gcc, g++, make, pkg-config,
+               libjack-jackd2-dev | libjack-dev,
+               libasound2-dev,
+               liblilv-dev,
+               lv2-dev,
+               python3, python3-venv, python3-dev,
+               zlib1g-dev, libjpeg62-turbo-dev | libjpeg-turbo-dev
+Standards-Version: 4.6.0
+
+Package: stom-pi-ui
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         adduser
+Recommends: stom-pi-modhost
+Description: Web UI / HMI server for Rustyfoot (stom-pi)
+ mod-ui is the webserver that delivers the HTML5 pedalboard editor and
+ talks to the stom-pi audio host (mod-host) over its socket. This package
+ ships the UI under /usr/share/stom-pi/, a self-contained Python venv with
+ its pinned third-party dependencies, libmod_utils.so, a launcher script
+ (/usr/bin/stom-pi) and a systemd service. User data (pedalboards, plugins,
+ settings) lives in /var/lib/stom-pi/

@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+# The system user "stom-pi" and /var/lib/stom-pi are shared with stom-pi-modhost;
+# only clean up the data tree if that package is no longer installed.
+if [ "$1" = "purge" ]; then
+    if ! dpkg-query -W -f='${Status}' stom-pi-modhost 2>/dev/null | grep -q ' install ok '; then
+        rm -rf /var/lib/stom-pi
+    fi
+fi
+
+#DEBHELPER#
+exit 0

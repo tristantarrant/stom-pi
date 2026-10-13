@@ -1,0 +1,31 @@
+[Unit]
+Description=Stom-Pi - LV2 Pedalboard Web UI
+After=jackd-modhost.service
+Wants=jackd-modhost.service
+
+[Service]
+Type=simple
+Environment=MOD_HTML_DIR=/usr/share/stom-pi/html
+Environment=MOD_UI_DIR=/usr/share/stom-pi
+Environment=MOD_DATA_DIR=/var/lib/stom-pi
+Environment=MOD_USER_FILES_DIR=/var/lib/stom-pi/user-files
+Environment=MOD_USER_PLUGINS_DIR=/var/lib/stom-pi/plugins
+Environment=MOD_USER_PEDALBOARDS_DIR=/var/lib/stom-pi/pedalboards
+Environment=MOD_KEYS_PATH=/var/lib/stom-pi/keys/
+Environment=HOME=/var/lib/stom-pi
+Environment=XDG_CONFIG_HOME=/var/lib/stom-pi/.config
+Environment=XDG_DATA_HOME=/var/lib/stom-pi/.local/share
+Environment=XDG_CACHE_HOME=/var/cache/stom-pi
+Environment=LV2_PATH=/var/lib/stom-pi/plugins:/usr/lib/lv2:/usr/local/lib/lv2
+Environment=LD_LIBRARY_PATH=/usr/lib/stom-pi
+User=stom-pi
+ExecStart=/usr/bin/stom-pi
+# Port 80 is a privileged port: grant the capability so we can bind it as User=.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+

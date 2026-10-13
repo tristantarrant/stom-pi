@@ -1,0 +1,71 @@
+#!/bin/sh
+set -e
+
+# Shared appliance identity with stom-pi-modhost: both packages run as the same
+# system user. Create idempotently so this package also works standalone, and
+# whichever installs first wins (both converge on identical attributes).
+# Migrate legacy 'modhost' account (pre-rename builds) to 'stom-pi'. Renaming keeps
+# UID/GID, so existing files under /var/lib/stom-pi remain accessible without a chown.
+if getent passwd modhost >/dev/null 2>&1 && ! getent group stom-pi >/dev/null 2>&1; then
+    usermod -l stom-pi modhost || true
+    groupmod -n stom-pi modhost || true
+fi
+if ! getent group stom-pi >/dev/null 2>&1; then
+    addgroup --system stom-pi
+fi
+if ! getent passwd stom-pi >/dev/null 2>&1; then
+    adduser --system --ingroup stom-pi \
+        --home /var/lib/stom-pi \
+        --shell /usr/sbin/nologin \
+        --no-create-home \
+        stom-pi
+fi
+
+# Best-effort device group memberships (JACK/ALSA/UI hardware); groups may not
+# exist on a desktop install.
+for g in audio video render input gpio; do
+    if getent group "$g" >/dev/null 2>&1 && ! id -nG stom-pi | tr ' ' '\n' | grep -qx "$g"; then
+        adduser --quiet stom-pi "$g" || true
+    fi
+done
+
+# Writable state shared with the audio host; top-level ownership only, so user
+# data is never rewritten on upgrade.
+# Per-category upload dirs under user-files/ (names mirror FilesList._get_dir_and_extensions_for_filetype in mod-ui);
+install -d /var/lib/stom-pi \
+           /var/lib/stom-pi/user-files \
+           "/var/lib/stom-pi/user-files/Audio Loops" \
+           "/var/lib/stom-pi/user-files/Audio Recordings" \
+           "/var/lib/stom-pi/user-files/Audio Samples" \
+           "/var/lib/stom-pi/user-files/Audio Tracks" \
+           "/var/lib/stom-pi/user-files/Speaker Cabinets IRs" \
+           "/var/lib/stom-pi/user-files/Hydrogen Drumkits" \
+           "/var/lib/stom-pi/user-files/Reverb IRs" \
+           "/var/lib/stom-pi/user-files/MIDI Clips" \
+           "/var/lib/stom-pi/user-files/MIDI Songs" \
+           "/var/lib/stom-pi/user-files/SF2 Instruments" \
+           "/var/lib/stom-pi/user-files/SFZ Instruments" \
+           "/var/lib/stom-pi/user-files/Aida DSP Models" \
+           "/var/lib/stom-pi/user-files/NAM Models" \
+           "/var/lib/stom-pi/user-files/Easy Spin Programs" \
+           /var/lib/stom-pi/plugins \
+           /var/lib/stom-pi/pedalboards
+chown stom-pi:stom-pi /var/lib/stom-pi \
+                      /var/lib/stom-pi/user-files \
+                      "/var/lib/stom-pi/user-files/Audio Loops" \
+                      "/var/lib/stom-pi/user-files/Audio Recordings" \
+                      "/var/lib/stom-pi/user-files/Audio Samples" \
+                      "/var/lib/stom-pi/user-files/Audio Tracks" \
+                      "/var/lib/stom-pi/user-files/Speaker Cabinets IRs" \
+                      "/var/lib/stom-pi/user-files/Hydrogen Drumkits" \
+                      "/var/lib/stom-pi/user-files/Reverb IRs" \
+                      "/var/lib/stom-pi/user-files/MIDI Clips" \
+                      "/var/lib/stom-pi/user-files/MIDI Songs" \
+                      "/var/lib/stom-pi/user-files/SF2 Instruments" \
+                      "/var/lib/stom-pi/user-files/SFZ Instruments" \
+                      "/var/lib/stom-pi/user-files/Aida DSP Models" \
+                      "/var/lib/stom-pi/user-files/NAM Models" \
+                      "/var/lib/stom-pi/user-files/Easy Spin Programs" \
+                      /var/lib/stom-pi/plugins \
+                      /var/lib/stom-pi/pedalboards
+#DEBHELPER#

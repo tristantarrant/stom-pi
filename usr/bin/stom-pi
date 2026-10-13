@@ -1,0 +1,40 @@
+#!/bin/sh
+# Launcher for the Stom-Pi UI server (installed as /usr/bin/stom-pi).
+# Maps mod-ui's MOD_* environment contract onto the packaged layout:
+#   read-only assets in /usr/share/stom-pi/, writable state in /var/lib/stom-pi/.
+set -eu
+
+if [ -r /etc/default/stom-pi ]; then
+    . /etc/default/stom-pi  # operator overrides (conffile) win over the defaults below
+fi
+
+# Read-only assets.
+export MOD_HTML_DIR="${MOD_HTML_DIR:-/usr/share/stom-pi/html}"
+export MOD_FACTORY_PEDALBOARDS_DIR="${MOD_FACTORY_PEDALBOARDS_DIR:-/usr/share/stom-pi/factory-pedalboards}"
+
+# Build identifier shown on the settings page; written at package-build time, overridable here.
+export MOD_UI_BUILD="${MOD_UI_BUILD:-$(cat /usr/share/stom-pi/build 2>/dev/null || echo unknown)}"
+
+# Seed board for the user's default.pedalboard: first factory board found, unless overridden.
+if [ -z "${MOD_DEFAULT_PEDALBOARD:-}" ]; then
+    for d in "$MOD_FACTORY_PEDALBOARDS_DIR"/*.pedalboard; do
+        if [ -d "$d" ]; then
+            export MOD_DEFAULT_PEDALBOARD="$d"
+            break
+        fi
+    done
+fi
+
+# Writable state: everything under /var/lib/stom-pi (shared tree with the audio host).
+export MOD_DATA_DIR="${MOD_DATA_DIR:-/var/lib/stom-pi}"
+export MOD_USER_FILES_DIR="${MOD_USER_FILES_DIR:-$MOD_DATA_DIR/user-files}"
+export MOD_USER_PLUGINS_DIR="${MOD_USER_PLUGINS_DIR:-$MOD_DATA_DIR/plugins}"
+export MOD_USER_PEDALBOARDS_DIR="${MOD_USER_PEDALBOARDS_DIR:-$MOD_DATA_DIR/pedalboards}"
+export MOD_KEYS_PATH="${MOD_KEYS_PATH:-$MOD_DATA_DIR/keys}"
+export MOD_FACTORY_BANKS_JSON="${MOD_FACTORY_BANKS_JSON:-$MOD_DATA_DIR/banks-factory.json}"
+
+# Webserver port. 80 needs CAP_NET_BIND_SERVICE (granted by stom-pi.service);
+# override to a high number in /etc/default/stom-pi if you don't want that capability.
+export MOD_DEVICE_WEBSERVER_PORT="${MOD_DEVICE_WEBSERVER_PORT:-80}"
+
+exec /usr/lib/stom-pi/venv/bin/python3 -m mod.webserver "$@"

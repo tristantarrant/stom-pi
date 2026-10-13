@@ -1,0 +1,4 @@
+[submodule "mod-ui"]
+	path = mod-ui
+	url = git@github.com:tristantarrant/stom-pi-ui.git
+	branch = stom-pi

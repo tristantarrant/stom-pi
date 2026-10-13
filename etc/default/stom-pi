@@ -1,0 +1,36 @@
+# Operator overrides for stom-pi-ui (sourced by /usr/bin/stom-pi).
+# Every value is optional: if left unset, the launcher applies its built-in
+# default (shown in each comment). Values set here win over those defaults.
+
+# Webserver TCP port (default 80; use e.g. 8080 to drop CAP_NET_BIND_SERVICE)
+#MOD_DEVICE_WEBSERVER_PORT=80
+
+# Read-only assets (defaults below match the installed layout)
+#MOD_HTML_DIR=/usr/share/stom-pi/html
+#MOD_FACTORY_PEDALBOARDS_DIR=/usr/share/stom-pi/factory-pedalboards
+
+# Writable state; everything lives under MOD_DATA_DIR unless overridden
+#MOD_DATA_DIR=/var/lib/stom-pi
+#MOD_USER_FILES_DIR=/var/lib/stom-pi/user-files
+# (postinst pre-creates per-category subdirectories such as "NAM Models" inside it)
+#MOD_USER_PLUGINS_DIR=/var/lib/stom-pi/plugins
+#MOD_USER_PEDALBOARDS_DIR=/var/lib/stom-pi/pedalboards
+
+# Key material and factory bank list (defaults under MOD_DATA_DIR)
+#MOD_KEYS_PATH=/var/lib/stom-pi/keys
+#MOD_FACTORY_BANKS_JSON=/var/lib/stom-pi/banks-factory.json
+
+# Pedalboard copied to the user's default.pedalboard on first start;
+# defaults to the first board found in the factory directory.
+#MOD_DEFAULT_PEDALBOARD=
+
+# --- HMI transport --------------------------------------------------------------
+# This appliance has no serial HMI hardware: its companion app speaks the HMI
+# protocol over TCP, so use that transport by default. The webserver dials out
+# to MOD_HMI_TCP_HOST:MOD_HMI_TCP_PORT and retries until connected (no-op if the
+# app is not running). For a physical serial HMI instead set:  MOD_HMI_TRANSPORT=serial
+MOD_HMI_TRANSPORT=tcp
+
+# Where the companion app listens; only needed when it runs on another machine.
+#MOD_HMI_TCP_HOST=127.0.0.1
+#MOD_HMI_TCP_PORT=5000

@@ -1,0 +1,15 @@
+# dpkg-buildpackage / debhelper build state -- regenerated on every build
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files
+debian/*.substvars
+debian/*.debhelper.log
+debian/*.debhelper
+
+# Per-package staging tree: dh_prep wipes and refills it each build.
+# One line per binary package in debian/control; never commit:
+debian/stom-pi-ui/
+
+# Python scratch, if dev tooling ever runs at the wrapper level
+__pycache__/
+*.pyc

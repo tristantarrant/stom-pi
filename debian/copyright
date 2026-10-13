@@ -1,0 +1,33 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: mod-ui
+
+Files: *
+Copyright: 2026 Dataforte <info@dataforte.net>
+License: AGPL-3+
+
+Files: mod-ui/*
+Copyright: MOD Audio (https://github.com/mod-audio)
+License: AGPL-3+
+
+Files: debian/**
+Copyright: 2026 Dataforte <info@dataforte.net>
+License: AGPL-3+
+
+# Third-party Python packages are installed at build time from PyPI into the
+# self-contained venv under /usr/lib/stom-pi/venv (see mod-ui/requirements.txt).
+# Each retains its own license metadata in site-packages. Notable ones:
+# tornado (Apache-2.0/BSD), Pillow (MIT/PIL), pyserial (BSD-3-Clause),
+# pycryptodomex (BSD-style "Cryptix" licence), aggdraw (see its bundled LICENSE).
+
+License: AGPL-3+
+ This program is free software: you can redistribute it and/or modify it under
+ the terms of the GNU Affero General Public License as published by the Free
+ Software Foundation, either version 3 of the License, or (at your option) any
+ later version.
+ .
+ This package is distributed in the hope that it will be useful, but WITHOUT ANY
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+ .
+ You should have received a copy of the GNU Affero General Public License along
+ with this program. If not, see <https://www.gnu.org/licenses/agpl-3.0.html>.

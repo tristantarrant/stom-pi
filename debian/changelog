@@ -1,0 +1,14 @@
+stom-pi-ui (0.1.0) unstable; urgency=medium
+
+  * Initial packaging of the Stom-Pi web UI / HMI server (mod-ui). Ships HTML
+    assets under /usr/share/stom-pi/, a self-contained Python venv with its pinned
+    third-party dependencies, libmod_utils.so in /usr/lib/stom-pi/, the launcher
+    script /usr/bin/stom-pi and the stom-pi.service systemd unit, and seven factory pedalboards under /usr/share/stom-pi/factory-pedalboards/. User data
+    (pedalboards, plugins, settings) lives in /var/lib/stom-pi/, a tree shared
+     with stom-pi-modhost under the same system user.
+  * mod-ui submodule now tracks our fork tristantarrant/stom-pi-ui on branch stom-pi (commit d1571cbd, rebased onto upstream b801afca / PR #196; community picks below, our own commits on top). Stack above upstream: a TCP socket transport for HMI communication, the built-in user-files manager and pedalboard grid alignment; curated community features — Andrea Del Signore's markdown help system (click-to-help mode with per-element data-help-id pages) and Stefan Doerr's marquee multi-select of plugins, delete-selection via Delete/Backspace and shift-click port fix — plus his earlier UI fixes: canvas auto-sizing, stereo cable rendering (matched pair + leg stripes), background droppable re-enablement, mouse-wheel zoom/scroll guards, fit-the-board-on-load. Tone3000 integration and EasySpin program support now ship from upstream master itself, as do the earlier MOD-Father picks (PRs #182-#196). The settings page shows a "UI Build" identifier carrying the git commit of the shipped mod-ui checkout.
+   * Grant CAP_NET_BIND_SERVICE (AmbientCapabilities=) in the systemd unit so the webserver can bind TCP/80 as an unprivileged user.
+   * /etc/default/stom-pi now sets MOD_HMI_TRANSPORT=tcp by default: the appliance's companion app speaks the HMI protocol over TCP. Set it to 'serial' for physical serial HMIs.
+   * postinst now pre-creates the per-category upload directories under /var/lib/stom-pi/user-files (audio loops/recordings/samples/tracks, MIDI clips and songs, NAM models, SF2/SFZ instruments, reverb/cabinet IRs, Hydrogen drumkits, Aida DSP models and Easy Spin programs), matching mod-ui's file manager categories.
+
+ -- Dataforte <info@dataforte.net>  Sun, 27 Sep 2026 12:00:00 +0300

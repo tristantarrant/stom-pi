@@ -1,0 +1,32 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+
+STAGE := $(CURDIR)/debian/stom-pi-ui
+
+# Optional offline build: if ./wheels is present, prebuilt wheels are used instead of the network.
+PIP_FLAGS :=
+ifneq (,$(wildcard $(CURDIR)/wheels))
+PIP_FLAGS += --no-index --find-links=$(CURDIR)/wheels
+endif
+
+%:
+	dh $@
+
+# Must run in the INSTALL phase, not build: dh_prep (which runs before install)
+# wipes debian/<pkg>/, so anything staged during auto_build would be deleted.
+override_dh_auto_install:
+	./debian/scripts/stage-build.sh "$(STAGE)" "$(CURDIR)" "$(PIP_FLAGS)"
+
+# PipeWire's JACK compatibility library ships no dpkg shlib metadata (same workaround as stom-pi-modhost).
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+
+# Upstream tests need a running JACK server and MOD hardware; not run at build time.
+override_dh_auto_test:
+	true
+
+# dwz chokes on the third-party .so files vendored in the venv (wheel-bundled libs,
+# abi3 extensions); only our first-party libmod_utils.so is worth merging debug info for.
+override_dh_dwz:
+	dh_dwz -Xusr/lib/stom-pi/venv
